@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cassina Game - Mobile</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8512bf", // Main game purple
+                        "accent-gold": "#ffd700",
+                        "accent-cyan": "#00f0ff",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a0b2e", // Deep space purple/dark
+                        "vault-slot": "#2d1b4d",
+                        "vault-border": "#4a3572",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #3a1d4d, 0 4px 0 0 #3a1d4d, -4px 0 0 0 #3a1d4d, 4px 0 0 0 #3a1d4d;
+        }
+
+        .pixel-border-gold {
+            box-shadow: 0 -2px 0 0 #ffd700, 0 2px 0 0 #ffd700, -2px 0 0 0 #ffd700, 2px 0 0 0 #ffd700;
+        }
+
+        .pixel-bg {
+            background-image: radial-gradient(circle, #3a1d4d 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+
+        .starfield {
+            background-image:
+                radial-gradient(1px 1px at 20px 30px, #fff, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 50px 160px, #8512bf, rgba(0, 0, 0, 0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .animate-bounce-in {
+            animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .glass-card {
+            background: rgba(20, 10, 30, 0.9);
+            border: 2px solid #8512bf;
+            box-shadow: 0 0 15px rgba(133, 18, 191, 0.3);
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30">
+    <!-- Phone Container -->
+    <div
+        class="relative flex h-screen w-full max-w-[430px] mx-auto flex-col overflow-hidden bg-background-light dark:bg-background-dark border-x border-white/5 starfield">
+
+        <!-- Top App Bar / Profile -->
+        <div
+            class="flex items-center bg-background-dark/80 backdrop-blur-sm p-4 pb-2 justify-between border-b-4 border-primary/20 z-20 shrink-0">
+            <div class="flex size-12 shrink-0 items-center justify-center pixel-border bg-[#3a1d4d] rounded-none cursor-pointer"
+                onclick="openSettingsModal()">
+                <div class="bg-center bg-no-repeat aspect-square bg-cover size-8" data-alt="Pixel art avatar"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBciyMrtTbNI5LyzsPUpZp8OMFWB5Sw1xAd6NT8fqX_uZEgnKa-ABdl2JiZfabg0RxtUiWZkDJKVrzQMuz7j_GWRoFj5YY4k4NMh4wPdUnyywqJAkprqA3J6KZ3SYovfqBCL5p6gTRSuiE3v75M29lnic1-mX2CMG9WaywZ7N6m0wm9BER3-skmDGuQ32GSJFDtZD1PU8f6jjqfz8ulpy-wsPNE3l7vOxvsFcAhSOQUshjZBhAMy4rGlSe6hKyVu7tuijwyOU-vWbY");'>
+                </div>
+            </div>
+            <div class="flex-1 px-4">
+                <h2 class="text-white text-lg font-bold leading-tight tracking-wider uppercase">Cassina</h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-accent-gold text-xs font-bold px-1 border border-accent-gold/50" data-level>LVL
+                        1</span>
+                    <span class="text-[#b692c8] text-xs font-medium truncate max-w-[100px]" data-username>Player</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1 bg-black/40 px-3 py-1 pixel-border-gold">
+                <span class="text-accent-gold text-sm font-bold">100</span>
+                <span class="material-symbols-outlined text-accent-gold text-base"
+                    style="font-variation-settings: 'FILL' 1">stars</span>
+            </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <main class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col pb-32">
+
+            <!-- Experience Bar -->
+            <div class="flex flex-col gap-2 p-4 pt-4 z-10 shrink-0">
+                <div class="flex justify-between items-end">
+                    <p class="text-accent-cyan text-[10px] font-bold tracking-[0.2em] uppercase">EXP</p>
+                    <p class="text-white text-xs font-bold" data-xp-text>0 / 1000</p>
+                </div>
+                <div class="h-4 w-full bg-[#3a1d4d] p-1 pixel-border border-primary/40">
+                    <div class="h-full bg-accent-cyan shadow-[0_0_10px_#00f0ff]" style="width: 0%;" data-xp-bar></div>
+                </div>
+            </div>
+
+            <!-- Central Wheel -->
+            <div class="flex-1 flex flex-col items-center justify-center py-4 relative z-10 min-h-[400px]">
+                <h2
+                    class="text-accent-gold tracking-[0.3em] text-lg font-bold uppercase mb-6 drop-shadow-[0_2px_0_#8512bf]">
+                    Celestial Wheel</h2>
+
+                <div class="relative w-64 h-64 flex items-center justify-center">
+                    <!-- Outer Ring -->
+                    <div
+                        class="absolute inset-0 rounded-full border-[6px] border-primary pixel-border-gold animate-spin-slow">
+                    </div>
+                    <!-- Wheel -->
+                    <div class="w-56 h-56 rounded-full border-4 border-primary/40 overflow-hidden relative bg-black/40 bg-cover"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDmBNx958b4-JXkBTnlCsC4BGrOWmwQ9JwkInnEPcV36aEeMhDu8YH82vEUkwOZVaMJKQm_l2_n7hTXs-Ubp2wrcKXiQkcBOLvLqg84N1vIBu0-BpOPXD9GyZUSq1oz0S9_4IFDs-ggn1TaeLZbXgt512GdemM4SJCO0gNcDWUIpz4vEowNYK9KWjAy4a_AJRIQaLfZ2bZxbbkytxsws-WxaMUWNr5XEwiXxsqeUFFTuAry-sLycupSV85YjgGKCsYBKyASu-CPgtA");'>
+                    </div>
+                    <!-- Pointer -->
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 flex justify-center z-20">
+                        <span class="material-symbols-outlined text-accent-gold text-4xl"
+                            style="font-variation-settings: 'FILL' 1">arrow_drop_down</span>
+                    </div>
+                </div>
+
+                <!-- Spin Button -->
+                <button class="mt-8 group relative scale-90 active:scale-95 transition-transform"
+                    onclick="performSpin()" data-spin-btn>
+                    <div
+                        class="absolute -inset-1 bg-primary blur-md opacity-50 group-hover:opacity-100 transition duration-200">
+                    </div>
+                    <div
+                        class="relative px-10 py-3 bg-primary text-white font-bold text-lg uppercase tracking-widest pixel-border flex flex-col items-center">
+                        <span data-spin-text>SPIN</span>
+                        <span data-spin-subtext class="text-[9px] text-accent-gold mt-0.5">Ready</span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-3 px-4 pb-4 z-10 shrink-0">
+                <!-- Speed -->
+                <div class="bg-primary/10 p-2 flex flex-col items-center gap-1 pixel-border border-primary/30 pixel-bg"
+                    data-stat="speed">
+                    <img src="speed.png" alt="Speed" class="w-10 h-10" style="image-rendering: pixelated;">
+                    <span class="text-[9px] text-accent-cyan font-bold uppercase tracking-tighter">Speed</span>
+                    <span class="text-sm font-bold" data-stat-value>0</span>
+                    <div class="w-full h-1 bg-white/10 mt-1">
+                        <div class="h-full bg-accent-cyan" style="width: 0%" data-stat-bar></div>
+                    </div>
+                </div>
+                <!-- Luck -->
+                <div class="bg-primary/10 p-2 flex flex-col items-center gap-1 pixel-border border-primary/30 pixel-bg"
+                    data-stat="purity">
+                    <img src="purity.png" alt="Purity" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-[9px] text-accent-gold font-bold uppercase tracking-tighter">Purity</span>
+                    <span class="text-sm font-bold" data-stat-value>0%</span>
+                    <div class="w-full h-1 bg-white/10 mt-1">
+                        <div class="h-full bg-accent-gold" style="width: 0%" data-stat-bar></div>
+                    </div>
+                </div>
+                <!-- Magnet -->
+                <div class="bg-primary/10 p-2 flex flex-col items-center gap-1 pixel-border border-primary/30 pixel-bg"
+                    data-stat="magnetism">
+                    <img src="magnet.png" alt="Magnet" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-[9px] text-purple-400 font-bold uppercase tracking-tighter">Magnet</span>
+                    <span class="text-sm font-bold" data-stat-value>PAR.0</span>
+                    <div class="w-full h-1 bg-white/10 mt-1">
+                        <div class="h-full bg-purple-400" style="width: 0%" data-stat-bar></div>
+                    </div>
+                </div>
+                <!-- Luck Buff -->
+                <div class="bg-primary/10 p-2 flex flex-col items-center gap-1 pixel-border border-primary/30 pixel-bg"
+                    data-stat="luck_buff">
+                    <img src="clover.png" alt="Luck Buff" class="w-8 h-8" style="image-rendering: pixelated;">
+                    <span class="text-[9px] text-green-500 font-bold uppercase tracking-tighter">Streak</span>
+                    <span class="text-sm font-bold" data-stat-value>+0%</span>
+                    <div class="w-full h-1 bg-white/10 mt-1">
+                        <div class="h-full bg-green-500" style="width: 0%" data-stat-bar></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Navigation Bar -->
+        <nav
+            class="absolute bottom-0 left-0 w-full bg-background-dark/95 backdrop-blur-md border-t-2 border-vault-border px-6 py-4 flex items-center justify-between z-20 shrink-0">
+            <button class="flex flex-col items-center gap-1 group relative pb-1">
+                <span class="material-symbols-outlined text-primary">home</span>
+                <span class="text-[9px] uppercase tracking-tighter text-primary font-bold">Home</span>
+                <div class="absolute -bottom-4 w-8 h-1 bg-primary"></div>
+            </button>
+            <button onclick="window.location.href='vault.html'" class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">inventory_2</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Vault</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 group opacity-50 hover:opacity-100">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">shopping_cart</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Shop</span>
+            </button>
+            <button onclick="window.location.href='profile.html'"
+                class="flex flex-col items-center gap-1 group opacity-50 hover:opacity-100">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">person</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Profile</span>
+            </button>
+        </nav>
+
+        <!-- Safe Area -->
+        <div class="h-6 bg-background-dark w-full shrink-0"></div>
+
+        <!-- Settings Modal (Legacy: Moved to Profile) -->
+        <!-- Logic removed, redirecting to Profile Page -->
+
+    </div>
+
+    <!-- Logic Script (Copied & Minified from previous, ensured correct IDs) -->
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let currentUserId = 40;
+
+        async function loadUserData() {
+            try {
+                const user = await fetch(`${API_BASE}/users/${currentUserId}`).then(r => r.json());
+                document.querySelector('[data-username]').textContent = user.username || 'Player';
+                document.querySelector('[data-level]').textContent = `LVL ${user.level || 1}`;
+                const xpNeeded = user.level * 1000;
+                document.querySelector('[data-xp-text]').textContent = `${user.experience} / ${xpNeeded}`;
+                document.querySelector('[data-xp-bar]').style.width = `${(user.experience / xpNeeded) * 100}%`;
+                // Populate Modal
+                document.getElementById('modalUsername').textContent = user.username;
+                document.getElementById('modalEmail').textContent = user.email;
+            } catch (e) { console.error('User data error', e); }
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await fetch(`${API_BASE}/stats/${currentUserId}/effective`).then(r => r.json());
+                const effective = stats.effectiveStats || {};
+
+                // Helper to update
+                const update = (key, val, max, suffix) => {
+                    const el = document.querySelector(`[data-stat="${key}"]`);
+                    if (!el) return;
+                    el.querySelector('[data-stat-value]').textContent = suffix ? `${val}${suffix}` : val;
+                    el.querySelector('[data-stat-bar]').style.width = `${Math.min((val / max) * 100, 100)}%`;
+                };
+
+                update('purity', (effective.Purity || 0).toFixed(1), 100, '%');
+                update('speed', Math.floor(effective.Speed || 0), 500, '');
+
+                // Magnet special case
+                const magVal = effective.Magnetism || 0;
+                const magEl = document.querySelector('[data-stat="magnetism"]');
+                if (magEl) {
+                    magEl.querySelector('[data-stat-value]').textContent = `LV.${Math.floor(magVal / 10)}`;
+                    magEl.querySelector('[data-stat-bar]').style.width = `${(magVal % 10) * 10}%`;
+                }
+            } catch (e) { console.error('Stats error', e); }
+        }
+
+        async function checkSpinStatus() {
+            try {
+                const status = await fetch(`${API_BASE}/spin/${currentUserId}/status`).then(r => r.json());
+                const btn = document.querySelector('[data-spin-btn]');
+                const txt = document.querySelector('[data-spin-text]');
+                const sub = document.querySelector('[data-spin-subtext]');
+
+                if (status.can_spin) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'grayscale');
+                    txt.textContent = 'SPIN';
+                    sub.textContent = 'READY';
+                } else {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'grayscale');
+                    txt.textContent = 'WAIT';
+                    sub.textContent = status.time_remaining_formatted || '...';
+                    if (status.time_remaining_seconds > 0) setTimeout(checkSpinStatus, 1000);
+                }
+
+                // Daily Streak
+                const streak = status.daily_streak || 0;
+                const streakEl = document.querySelector('[data-stat="luck_buff"]');
+                if (streakEl) {
+                    streakEl.querySelector('[data-stat-value]').textContent = `+${streak * 5}%`;
+                    streakEl.querySelector('[data-stat-bar]').style.width = `${Math.min(streak * 5, 100)}%`;
+                }
+
+            } catch (e) { console.error(e); }
+        }
+
+        async function performSpin() {
+            try {
+                document.querySelector('[data-spin-btn]').disabled = true;
+                const res = await fetch(`${API_BASE}/spin/${currentUserId}`, { method: 'POST' }).then(r => r.json());
+                if (res.error) { alert(res.error); checkSpinStatus(); return; }
+
+                showSpinResult(res);
+                refreshAll();
+            } catch (e) { alert(e.message); checkSpinStatus(); }
+        }
+
+        function showSpinResult(result) {
+            // Simple Alert or Modal for now
+            const rarities = { 'Common': '#9CA3AF', 'Uncommon': '#10B981', 'Rare': '#3B82F6', 'Legendary': '#A855F7', 'Mythical': '#F59E0B' };
+            const color = rarities[result.item.rarity_name] || '#fff';
+
+            const div = document.createElement('div');
+            div.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-bounce-in';
+            div.innerHTML = `
+                <div class="glass-card p-6 max-w-xs w-full pixel-border border-2 text-center" style="border-color:${color}">
+                    <h2 class="text-xl font-bold uppercase mb-2" style="color:${color}">${result.item.rarity_name}</h2>
+                    <p class="text-white text-lg font-mono mb-4">${result.item.item_name}</p>
+                    <button onclick="this.closest('.fixed').remove()" class="bg-primary text-white font-bold py-2 px-6 uppercase text-sm pixel-border">Collect</button>
+                </div>
+             `;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
+        }
+
+        // Auth
+        // Auth logic moved to profile.html
+        // Keeping only minimal user data loader here
+
+        function refreshAll() {
+            loadUserData(); loadStats(); checkSpinStatus();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { refreshAll(); setInterval(checkSpinStatus, 10000); });
+    </script>
+</body>
+
+</html>

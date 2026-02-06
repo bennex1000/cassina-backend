@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>The Vault - Inventory Screen</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4d125",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a0b2e", // Deep space purple/dark
+                        "vault-slot": "#2d1b4d",
+                        "vault-border": "#4a3572",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .dither-bg {
+            background-image: radial-gradient(#ffffff11 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #000, 0 4px 0 0 #000, -4px 0 0 0 #000, 4px 0 0 0 #000;
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary selection:text-black">
+    <div
+        class="relative flex h-screen w-full max-w-[430px] mx-auto flex-col overflow-hidden bg-background-light dark:bg-background-dark border-x border-white/5">
+
+        <!-- Header -->
+        <header
+            class="flex items-center justify-between p-4 pt-8 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm z-10">
+            <button onclick="window.location.href='cassina-game.html'"
+                class="flex size-10 items-center justify-center bg-background-dark border-2 border-primary text-primary active:scale-95 transition-transform">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-2xl font-bold tracking-widest text-primary uppercase">The Vault</h1>
+            <div class="size-10 flex items-center justify-center border-2 border-vault-border text-vault-border">
+                <span class="material-symbols-outlined">settings</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto px-4 pb-32 dither-bg">
+
+            <!-- Equipment HUD -->
+            <section class="mt-4">
+                <h3 class="text-xs font-bold tracking-[0.2em] text-primary/70 mb-3 uppercase">Equipment</h3>
+                <div class="flex justify-between gap-2" id="equipment-container">
+                    <!-- Slots will be injected here -->
+                    <div
+                        class="flex-1 aspect-square bg-vault-slot border-2 border-vault-border flex items-center justify-center animate-pulse">
+                        <span class="material-symbols-outlined text-white/20">hourglass_empty</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Storage Grid -->
+            <section class="mt-8 mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold tracking-[0.2em] text-primary/70 uppercase">Storage</h3>
+                    <span
+                        class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/30"
+                        id="storage-count">0 / 20</span>
+                </div>
+                <div class="grid grid-cols-4 gap-3" id="storage-grid">
+                    <!-- Items will be injected here -->
+                    <div class="col-span-4 text-center text-white/40 py-8 text-xs">Loading Vault...</div>
+                </div>
+            </section>
+
+            <!-- Backdrop for closing -->
+            <div id="details-backdrop" onclick="closeItemDetails()"
+                class="absolute inset-0 bg-black/60 backdrop-blur-sm z-30 hidden transition-opacity duration-300 opacity-0">
+            </div>
+
+            <!-- Item Details Drawer -->
+            <section id="item-details"
+                class="absolute bottom-0 left-0 w-full bg-background-dark border-t-4 border-primary p-6 pb-8 z-40 transform transition-transform duration-300 translate-y-full rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/20 rounded-full mb-4"></div>
+
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-primary tracking-tight leading-none mb-1" id="detail-name">
+                            ITEM NAME</h4>
+                        <p class="text-[10px] text-white/50 uppercase tracking-widest font-medium border-b border-white/10 pb-2 inline-block"
+                            id="detail-type">
+                            Rarity Slot</p>
+                    </div>
+                    <div class="text-right">
+                        <span
+                            class="text-sm font-bold text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20"
+                            id="detail-level">LVL 1</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4 text-xs" id="detail-stats">
+                    <!-- Stats injected here -->
+                </div>
+
+                <p class="mb-6 text-xs leading-relaxed text-white/70 italic bg-black/20 p-3 rounded border border-white/5"
+                    id="detail-desc">
+                    Description goes here.
+                </p>
+
+                <div class="flex gap-3" id="detail-actions">
+                    <!-- Action buttons injected here -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Navigation Bar -->
+        <nav
+            class="absolute bottom-0 left-0 w-full bg-background-dark/95 backdrop-blur-md border-t-2 border-vault-border px-6 py-4 flex items-center justify-between z-20">
+            <button onclick="window.location.href='cassina-game.html'" class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">home</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Home</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 group relative pb-1">
+                <span class="material-symbols-outlined text-primary">inventory_2</span>
+                <span class="text-[9px] uppercase tracking-tighter text-primary font-bold">Vault</span>
+                <div class="absolute -bottom-4 w-8 h-1 bg-primary"></div>
+            </button>
+            <button class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">shopping_cart</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Shop</span>
+            </button>
+            <button onclick="window.location.href='profile.html'" class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">person</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Profile</span>
+            </button>
+        </nav>
+
+        <div class="h-6 bg-background-dark w-full shrink-0"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        const USER_ID = localStorage.getItem('cassina_user_id') || 40;
+
+        // Slot Configuration
+        const SLOTS = [
+            { id: 1, name: 'Head', icon: 'smart_toy' },
+            { id: 2, name: 'Eye', icon: 'visibility' },
+            { id: 3, name: 'Torso', icon: 'shield' },
+            { id: 4, name: 'Leg', icon: 'airline_seat_legroom_extra' },
+            { id: 5, name: 'Foot', icon: 'footprint' }
+        ];
+
+        let currentInventory = [];
+        let currentEquipped = {};
+
+        async function init() {
+            await Promise.all([fetchInventory(), fetchEquipped()]);
+            renderEquipment();
+            renderStorage();
+        }
+
+        async function fetchInventory() {
+            try {
+                const res = await fetch(`${API_BASE}/inventory/${USER_ID}?t=${Date.now()}`);
+                currentInventory = await res.json();
+                document.getElementById('storage-count').innerText = `${currentInventory.length} / 50`;
+            } catch (e) { console.error(e); }
+        }
+
+        async function fetchEquipped() {
+            try {
+                const res = await fetch(`${API_BASE}/inventory/${USER_ID}/equipped`);
+                currentEquipped = await res.json();
+            } catch (e) {
+                console.error(e);
+                currentEquipped = []; // Default to empty if error or 404 (no items equipped)
+            }
+        }
+
+        function getRarityColor(rarity) {
+            switch (rarity?.toLowerCase()) {
+                case 'common': return '#9CA3AF'; // Gray
+                case 'uncommon': return '#10B981'; // Green
+                case 'rare': return '#3B82F6'; // Blue
+                case 'legendary': return '#A855F7'; // Purple
+                case 'mythical': return '#F59E0B'; // Gold
+                default: return '#4a3572'; // Vault Border (Dark)
+            }
+        }
+
+        function renderEquipment() {
+            const container = document.getElementById('equipment-container');
+            container.innerHTML = '';
+
+            SLOTS.forEach(slot => {
+                // Backend returns object with keys 'Head', 'Eye', etc.
+                const equippedItem = currentEquipped[slot.name];
+                const color = equippedItem ? getRarityColor(equippedItem.rarity_name || equippedItem.rarity) : '#2d1b4d';
+                const borderColor = equippedItem ? color : '#4a3572';
+
+                const div = document.createElement('div');
+                div.className = `flex-1 aspect-square bg-vault-slot border-2 flex items-center justify-center relative cursor-pointer hover:brightness-110`;
+                div.style.borderColor = borderColor;
+
+                if (equippedItem) {
+                    div.innerHTML = `
+                        <span class="material-symbols-outlined text-white/80 text-2xl" 
+                              style="color: ${color}; filter: drop-shadow(0 0 5px ${color}40)">
+                              ${slot.icon}
+                        </span>
+                        <div class="absolute bottom-0 left-0 w-full h-1" style="background-color: ${color}"></div>
+                    `;
+                    div.onclick = () => showItemDetails(equippedItem, true);
+                } else {
+                    div.innerHTML = `
+                        <span class="material-symbols-outlined text-white/20 text-2xl">${slot.icon}</span>
+                    `;
+                    // Clicking empty slot could potentially filter storage? Future feature.
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function renderStorage() {
+            const grid = document.getElementById('storage-grid');
+            grid.innerHTML = '';
+
+            // Fill grid with items first
+            currentInventory.forEach(item => {
+                const color = getRarityColor(item.rarity_name);
+                const el = document.createElement('div');
+                el.className = 'aspect-square bg-vault-slot border-2 p-1 cursor-pointer hover:scale-105 transition-transform';
+                el.style.borderColor = color;
+
+                // Placeholder icon until we have item-specific art, use generic icon based on slot content or generic bag
+                el.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center relative">
+                         <span class="material-symbols-outlined" style="color:${color}">token</span>
+                         ${item.quantity > 1 ? `<span class="absolute bottom-0 right-0 bg-primary text-black text-[9px] font-bold px-1 rounded-tl-sm">x${item.quantity}</span>` : ''}
+                    </div>
+                `;
+                el.onclick = () => showItemDetails(item, false);
+                grid.appendChild(el);
+            });
+
+            // Fill remaining slots with placeholders (up to 20 for visual look)
+            const remaining = Math.max(0, 20 - currentInventory.length);
+            for (let i = 0; i < remaining; i++) {
+                const el = document.createElement('div');
+                el.className = 'aspect-square bg-vault-slot border-2 border-vault-border flex items-center justify-center opacity-40';
+                el.innerHTML = '<div class="w-1 h-1 bg-vault-border rounded-full"></div>';
+                grid.appendChild(el);
+            }
+        }
+
+        function showItemDetails(item, isEquipped) {
+            const details = document.getElementById('item-details');
+            const backdrop = document.getElementById('details-backdrop');
+
+            // Show backdrop
+            backdrop.classList.remove('hidden');
+            // Small timeout to allow transition to work
+            setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+
+            // Pop up drawer
+            details.classList.remove('translate-y-full');
+
+            document.getElementById('detail-name').innerText = item.item_name;
+            document.getElementById('detail-type').innerText = `${item.rarity_name || item.rarity} ${item.slot_name || ''}`;
+            document.getElementById('detail-desc').innerText = item.description || "No description available.";
+
+            const color = getRarityColor(item.rarity_name || item.rarity);
+            document.getElementById('detail-name').style.color = color;
+            details.style.borderColor = color;
+
+            // Stats
+            document.getElementById('detail-stats').innerHTML = `
+                <div class="flex items-center gap-2 p-2 bg-white/5 rounded">
+                    <span class="material-symbols-outlined text-[18px]" style="color:${color}">star</span>
+                    <div class="flex flex-col">
+                        <span class="text-[9px] text-white/40 uppercase font-bold">Base Value</span>
+                        <span class="font-bold text-white">${item.base_value || '?'}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 p-2 bg-white/5 rounded">
+                     <span class="material-symbols-outlined text-[18px]" style="color:${color}">token</span>
+                    <div class="flex flex-col">
+                        <span class="text-[9px] text-white/40 uppercase font-bold">Quantity</span>
+                        <span class="font-bold text-white">x${item.quantity || 1}</span>
+                    </div>
+                </div>
+            `;
+
+            // Actions
+            const actions = document.getElementById('detail-actions');
+            if (isEquipped) {
+                actions.innerHTML = `
+                    <button onclick="unequipItem(${item.item_id || item.inventory_id}, ${item.slot_id})" 
+                            class="flex-1 pixel-border bg-red-900/40 text-red-200 font-bold py-3 px-4 border border-red-500/30 active:bg-red-900/60 uppercase text-xs tracking-widest hover:brightness-110 transition-all">
+                        Unequip
+                    </button>
+                `;
+            } else {
+                actions.innerHTML = `
+                    <button onclick="equipItem(${item.item_id || item.inventory_id})" 
+                            class="flex-1 pixel-border text-black font-bold py-3 px-4 active:opacity-90 uppercase text-xs tracking-widest shadow-lg hover:brightness-110 transition-all"
+                            style="background-color: ${color}">
+                        Equip
+                    </button>
+                `;
+            }
+        }
+
+        function closeItemDetails() {
+            const details = document.getElementById('item-details');
+            const backdrop = document.getElementById('details-backdrop');
+
+            details.classList.add('translate-y-full');
+            backdrop.classList.add('opacity-0');
+
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+            }, 300);
+        }
+
+        async function equipItem(itemId) {
+            try {
+                const res = await fetch(`${API_BASE}/inventory/${USER_ID}/equip/${itemId}`, { method: 'PUT' });
+                if (res.ok) {
+                    init(); // Refresh all
+                    closeItemDetails();
+                } else {
+                    alert('Failed to equip item');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function unequipItem(inventoryId, slotId) {
+            // API expects slotId for unequip currently, or logic handles it?
+            // Checking routes: router.delete("/:userId/unequip/:slotId", unequipItem);
+            // Yes, expects slotId.
+            try {
+                const res = await fetch(`${API_BASE}/inventory/${USER_ID}/unequip/${slotId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    init();
+                    closeItemDetails();
+                } else {
+                    alert('Failed to unequip');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

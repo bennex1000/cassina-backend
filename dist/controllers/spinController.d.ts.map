@@ -1,0 +1,1 @@
+{"version":3,"file":"spinController.d.ts","sourceRoot":"","sources":["../../src/controllers/spinController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAK5C,eAAO,MAAM,IAAI,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,gDAmBrD,CAAC;AAEF,eAAO,MAAM,aAAa,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,gDAoC9D,CAAC;;gBAzD8B,OAAO,OAAO,QAAQ;yBAqBb,OAAO,OAAO,QAAQ;;AAsC/D,wBAAuC"}

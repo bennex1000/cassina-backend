@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cassina - Identity</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8512bf",
+                        "accent-gold": "#ffd700",
+                        "accent-cyan": "#00f0ff",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a0b2e",
+                        "card-bg": "#2d1b4d",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .pixel-border {
+            box-shadow: 0 -4px 0 0 #3a1d4d, 0 4px 0 0 #3a1d4d, -4px 0 0 0 #3a1d4d, 4px 0 0 0 #3a1d4d;
+        }
+
+        .pixel-border-sm {
+            box-shadow: 0 -2px 0 0 #3a1d4d, 0 2px 0 0 #3a1d4d, -2px 0 0 0 #3a1d4d, 2px 0 0 0 #3a1d4d;
+        }
+
+        .dither-bg {
+            background-image: radial-gradient(#ffffff11 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+
+        body {
+            min-height: max(100dvh, 600px);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30">
+    <div
+        class="relative flex h-screen w-full max-w-[430px] mx-auto flex-col overflow-hidden bg-background-light dark:bg-background-dark border-x border-white/5">
+
+        <!-- Header -->
+        <header
+            class="flex items-center justify-between p-4 pt-8 bg-background-dark/80 backdrop-blur-sm z-10 border-b-4 border-primary/20">
+            <button onclick="window.location.href='cassina-game.html'"
+                class="flex size-10 items-center justify-center bg-background-dark border-2 border-primary text-primary active:scale-95 transition-transform">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-xl font-bold tracking-widest text-primary uppercase">Identity Card</h1>
+            <div class="size-10"></div> <!-- Spacer -->
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 pb-32 dither-bg">
+
+            <!-- Profile Card -->
+            <section class="bg-card-bg p-6 pixel-border mb-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl">fingerprint</span>
+                </div>
+
+                <div class="flex items-center gap-4 mb-6 relative z-10">
+                    <div class="size-16 pixel-border bg-[#3a1d4d] flex items-center justify-center overflow-hidden">
+                        <div class="bg-center bg-no-repeat bg-cover size-14"
+                            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBciyMrtTbNI5LyzsPUpZp8OMFWB5Sw1xAd6NT8fqX_uZEgnKa-ABdl2JiZfabg0RxtUiWZkDJKVrzQMuz7j_GWRoFj5YY4k4NMh4wPdUnyywqJAkprqA3J6KZ3SYovfqBCL5p6gTRSuiE3v75M29lnic1-mX2CMG9WaywZ7N6m0wm9BER3-skmDGuQ32GSJFDtZD1PU8f6jjqfz8ulpy-wsPNE3l7vOxvsFcAhSOQUshjZBhAMy4rGlSe6hKyVu7tuijwyOU-vWbY");'>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white tracking-wider" id="profile-username">Loading...</h2>
+                        <p class="text-white/40 text-xs font-mono" id="profile-email">...</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-accent-gold text-xs font-bold px-1 border border-accent-gold/50"
+                                id="profile-level">LVL ?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 relative z-10">
+                    <!-- XP -->
+                    <div>
+                        <div class="flex justify-between text-[10px] uppercase font-bold text-accent-cyan mb-1">
+                            <span>Experience</span>
+                            <span id="profile-xp-text">0 / 0</span>
+                        </div>
+                        <div class="h-2 w-full bg-black/40">
+                            <div class="h-full bg-accent-cyan" style="width: 0%" id="profile-xp-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Detailed -->
+            <section class="mb-8">
+                <h3 class="text-xs font-bold tracking-[0.2em] text-primary/70 mb-4 uppercase">Attributes</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Speed -->
+                    <div class="bg-black/20 p-3 border border-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="speed.png" class="size-6 pixelated">
+                            <span class="text-xs font-bold uppercase text-white/70">Speed</span>
+                        </div>
+                        <span class="text-lg font-bold text-accent-cyan" id="stat-speed">0</span>
+                    </div>
+                    <!-- Purity -->
+                    <div class="bg-black/20 p-3 border border-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="purity.png" class="size-5 pixelated">
+                            <span class="text-xs font-bold uppercase text-white/70">Purity</span>
+                        </div>
+                        <span class="text-lg font-bold text-accent-gold" id="stat-purity">0%</span>
+                    </div>
+                    <!-- Magnet -->
+                    <div class="bg-black/20 p-3 border border-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="magnet.png" class="size-5 pixelated">
+                            <span class="text-xs font-bold uppercase text-white/70">Magnet</span>
+                        </div>
+                        <span class="text-lg font-bold text-purple-400" id="stat-magnet">LV.0</span>
+                    </div>
+                    <!-- Streak -->
+                    <div class="bg-black/20 p-3 border border-white/5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="clover.png" class="size-5 pixelated">
+                            <span class="text-xs font-bold uppercase text-white/70">Streak</span>
+                        </div>
+                        <span class="text-lg font-bold text-green-500" id="stat-luck">0%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Settings -->
+            <section>
+                <h3 class="text-xs font-bold tracking-[0.2em] text-primary/70 mb-4 uppercase">System</h3>
+
+                <div id="auth-forms" class="hidden space-y-4">
+                    <!-- Tabs -->
+                    <div class="flex gap-2 mb-4">
+                        <button onclick="showLogin()" id="tab-login"
+                            class="flex-1 py-2 text-xs font-bold uppercase pixel-border-sm bg-primary text-white">Login</button>
+                        <button onclick="showRegister()" id="tab-register"
+                            class="flex-1 py-2 text-xs font-bold uppercase pixel-border-sm bg-white/5 text-white/50">Register</button>
+                    </div>
+
+                    <!-- Login -->
+                    <div id="form-login" class="space-y-3">
+                        <input type="text" id="login-email" placeholder="Email Address"
+                            class="w-full bg-black/40 border border-primary/30 px-3 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-primary">
+                        <input type="password" id="login-password" placeholder="Password"
+                            class="w-full bg-black/40 border border-primary/30 px-3 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-primary">
+                        <button onclick="handleLogin()"
+                            class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-3 uppercase text-xs tracking-widest pixel-border-sm">Initialize
+                            Session</button>
+                    </div>
+
+                    <!-- Register -->
+                    <div id="form-register" class="space-y-3 hidden">
+                        <input type="text" id="reg-username" placeholder="Username"
+                            class="w-full bg-black/40 border border-primary/30 px-3 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-primary">
+                        <input type="text" id="reg-email" placeholder="Email Address"
+                            class="w-full bg-black/40 border border-primary/30 px-3 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-primary">
+                        <input type="password" id="reg-password" placeholder="Password"
+                            class="w-full bg-black/40 border border-primary/30 px-3 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-primary">
+                        <button onclick="handleRegister()"
+                            class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-3 uppercase text-xs tracking-widest pixel-border-sm">Create
+                            Identity</button>
+                    </div>
+
+                    <p id="auth-error"
+                        class="text-red-400 text-[10px] font-mono p-2 bg-red-900/20 border border-red-500/30 hidden text-center">
+                    </p>
+                </div>
+
+                <div id="auth-logout" class="hidden">
+                    <button onclick="logout()"
+                        class="w-full bg-red-900/20 hover:bg-red-900/40 border border-red-500/30 text-red-200 font-bold py-3 uppercase text-xs tracking-widest pixel-border-sm transition-colors">
+                        Terminate Session
+                    </button>
+                    <p class="text-center text-[10px] text-white/20 mt-2 font-mono" id="user-id-display">ID: 000</p>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Nav -->
+        <nav
+            class="absolute bottom-0 left-0 w-full bg-background-dark/95 backdrop-blur-md border-t-2 border-primary/30 px-6 py-4 flex items-center justify-between z-20">
+            <button onclick="window.location.href='cassina-game.html'" class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">home</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Home</span>
+            </button>
+            <button onclick="window.location.href='vault.html'" class="flex flex-col items-center gap-1 group">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">inventory_2</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Vault</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 group opacity-50">
+                <span class="material-symbols-outlined text-white/40 group-hover:text-white">shopping_cart</span>
+                <span class="text-[9px] uppercase tracking-tighter text-white/40">Shop</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 group relative pb-1">
+                <span class="material-symbols-outlined text-primary">person</span>
+                <span class="text-[9px] uppercase tracking-tighter text-primary font-bold">Profile</span>
+                <div class="absolute -bottom-4 w-8 h-1 bg-primary"></div>
+            </button>
+        </nav>
+        <div class="h-6 bg-background-dark w-full shrink-0"></div>
+
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let currentUserId = localStorage.getItem('cassina_user_id') || 40;
+
+        async function init() {
+            await loadUser();
+            await loadStats();
+            updateAuthUI();
+        }
+
+        async function loadUser() {
+            try {
+                const user = await fetch(`${API_BASE}/users/${currentUserId}`).then(r => r.json());
+
+                // Card
+                document.getElementById('profile-username').textContent = user.username || 'Unknown';
+                document.getElementById('profile-email').textContent = user.email || 'No Data';
+                document.getElementById('profile-level').textContent = `LVL ${user.level || 1}`;
+                document.getElementById('user-id-display').textContent = `ID: ${currentUserId}`;
+
+                const xpNeeded = user.level * 1000;
+                document.getElementById('profile-xp-text').textContent = `${user.experience} / ${xpNeeded}`;
+                document.getElementById('profile-xp-bar').style.width = `${Math.min((user.experience / xpNeeded) * 100, 100)}%`;
+
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await fetch(`${API_BASE}/stats/${currentUserId}/effective`).then(r => r.json());
+                const eff = stats.effectiveStats || {};
+
+                document.getElementById('stat-speed').textContent = Math.floor(eff.Speed || 0);
+                document.getElementById('stat-purity').textContent = `${(eff.Purity || 0).toFixed(1)}%`;
+                document.getElementById('stat-magnet').textContent = `LV.${Math.floor((eff.Magnetism || 0) / 10)}`;
+
+                // Fetch Streak specifically if needed, or assume it comes from spin status?
+                // Let's check spin status quick
+                try {
+                    const status = await fetch(`${API_BASE}/spin/${currentUserId}/status`).then(r => r.json());
+                    document.getElementById('stat-luck').textContent = `+${(status.daily_streak || 0) * 5}%`;
+                } catch (e) { }
+
+            } catch (e) { console.error(e); }
+        }
+
+        function updateAuthUI() {
+            // Logic: If user is default (40) or valid, we show Logout.
+            // If we are in a "logged out" state (which we kind of don't support fully yet as 40 is default), 
+            // we simulate it.
+            // For now, let's assume if ID is 40 (test) or any ID, you are logged in.
+            // But we want to allow switching.
+
+            // Actually, showing the forms AND the logout button is confusing.
+            // If logged in, show Logout. If logged out (or want to switch), maybe just Logout to see forms?
+
+            // Let's say: Always show stats (of current ID). Show Logout button.
+            // If you logout, we switch ID to... 1? Or null?
+            // Let's implement a 'guest' mode handling, but for now:
+
+            document.getElementById('auth-logout').classList.remove('hidden');
+            document.getElementById('auth-forms').classList.add('hidden');
+        }
+
+        function logout() {
+            // When logging out, we clear ID and show forms
+            localStorage.removeItem('cassina_user_id');
+            currentUserId = null;
+
+            document.getElementById('auth-logout').classList.add('hidden');
+            document.getElementById('auth-forms').classList.remove('hidden');
+
+            // Clear Display
+            document.getElementById('profile-username').textContent = 'Guest';
+            document.getElementById('profile-email').textContent = 'Please Login';
+        }
+
+        function showLogin() {
+            document.getElementById('tab-login').classList.replace('bg-white/5', 'bg-primary');
+            document.getElementById('tab-login').classList.remove('text-white/50');
+            document.getElementById('tab-register').classList.replace('bg-primary', 'bg-white/5');
+            document.getElementById('tab-register').classList.add('text-white/50');
+            document.getElementById('form-login').classList.remove('hidden');
+            document.getElementById('form-register').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('tab-register').classList.replace('bg-white/5', 'bg-primary');
+            document.getElementById('tab-register').classList.remove('text-white/50');
+            document.getElementById('tab-login').classList.replace('bg-primary', 'bg-white/5');
+            document.getElementById('tab-login').classList.add('text-white/50');
+            document.getElementById('form-register').classList.remove('hidden');
+            document.getElementById('form-login').classList.add('hidden');
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const pw = document.getElementById('login-password').value;
+            const err = document.getElementById('auth-error');
+
+            try {
+                const res = await fetch(`${API_BASE}/users/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) });
+                if (!res.ok) throw new Error((await res.json()).error);
+
+                const data = await res.json();
+                currentUserId = data.user.user_id;
+                localStorage.setItem('cassina_user_id', currentUserId);
+
+                err.classList.add('hidden');
+                init(); // Refresh data
+                updateAuthUI(); // Show logout button
+            } catch (e) { err.textContent = e.message; err.classList.remove('hidden'); }
+        }
+
+        async function handleRegister() {
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const pw = document.getElementById('reg-password').value;
+            const err = document.getElementById('auth-error');
+
+            try {
+                const res = await fetch(`${API_BASE}/users/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, email, password: pw }) });
+                if (!res.ok) throw new Error((await res.json()).error);
+
+                const data = await res.json();
+                currentUserId = data.user_id;
+                localStorage.setItem('cassina_user_id', currentUserId);
+
+                err.classList.add('hidden');
+                init();
+                updateAuthUI();
+            } catch (e) { err.textContent = e.message; err.classList.remove('hidden'); }
+        }
+
+        // On Load
+        if (currentUserId) {
+            init();
+        } else {
+            // Show login screen immediately
+            logout();
+        }
+
+    </script>
+</body>
+
+</html>

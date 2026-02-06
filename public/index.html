@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cassina API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .response {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .response pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎮 Cassina API Tester</h1>
+
+        <div class="card">
+            <h2>🏥 Health Check</h2>
+            <button onclick="checkHealth()">Check API Health</button>
+            <div id="health-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>👤 User Registration</h2>
+            <div class="button-group">
+                <input type="text" id="username" placeholder="Username" value="player1">
+                <input type="email" id="email" placeholder="Email" value="player1@example.com">
+                <input type="password" id="password" placeholder="Password" value="password123">
+                <button onclick="registerUser()">Register User</button>
+            </div>
+            <div id="register-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>🔐 User Login</h2>
+            <div class="button-group">
+                <input type="email" id="login-email" placeholder="Email" value="player1@example.com">
+                <input type="password" id="login-password" placeholder="Password" value="password123">
+                <button onclick="loginUser()">Login</button>
+            </div>
+            <div id="login-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>🎁 Items</h2>
+            <div class="button-group">
+                <button onclick="getAllItems()">Get All Items (250)</button>
+                <button onclick="getItemById(1)">Get Item #1</button>
+                <button onclick="getItemsByRarity(5)">Get Mythical Items</button>
+            </div>
+            <div id="items-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>🎰 Spin System</h2>
+            <div class="button-group">
+                <input type="number" id="spin-user-id" placeholder="User ID" value="1" min="1">
+                <button onclick="performSpin()">Perform Spin</button>
+                <button onclick="checkSpinStatus()">Check Spin Status</button>
+            </div>
+            <div id="spin-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>🎒 Inventory</h2>
+            <div class="button-group">
+                <input type="number" id="inventory-user-id" placeholder="User ID" value="1" min="1">
+                <button onclick="getInventory()">Get Inventory</button>
+                <button onclick="getEquippedItems()">Get Equipped Items</button>
+            </div>
+            <div id="inventory-response" class="response hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Stats</h2>
+            <div class="button-group">
+                <input type="number" id="stats-user-id" placeholder="User ID" value="1" min="1">
+                <button onclick="getActiveStats()">Get Active Stats</button>
+                <button onclick="getBonuses()">Get Bonuses</button>
+                <button onclick="getEffectiveStats()">Get Effective Stats</button>
+            </div>
+            <div id="stats-response" class="response hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+
+        async function makeRequest(url, options = {}) {
+            const responseDiv = options.responseDiv;
+            responseDiv.classList.remove('hidden');
+            responseDiv.innerHTML = '<div class="loading"></div> Loading...';
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+
+                const statusClass = response.ok ? 'success' : 'error';
+                const statusText = response.ok ? 'Success' : 'Error';
+
+                responseDiv.innerHTML = `
+                    <div class="status ${statusClass}">${statusText} - ${response.status}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="status error">Error</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function checkHealth() {
+            await makeRequest(`${API_BASE}/health`, {
+                responseDiv: document.getElementById('health-response')
+            });
+        }
+
+        async function registerUser() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            await makeRequest(`${API_BASE}/users/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password }),
+                responseDiv: document.getElementById('register-response')
+            });
+        }
+
+        async function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            await makeRequest(`${API_BASE}/users/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+                responseDiv: document.getElementById('login-response')
+            });
+        }
+
+        async function getAllItems() {
+            await makeRequest(`${API_BASE}/items`, {
+                responseDiv: document.getElementById('items-response')
+            });
+        }
+
+        async function getItemById(id) {
+            await makeRequest(`${API_BASE}/items/${id}`, {
+                responseDiv: document.getElementById('items-response')
+            });
+        }
+
+        async function getItemsByRarity(rarityId) {
+            await makeRequest(`${API_BASE}/items?rarity_id=${rarityId}`, {
+                responseDiv: document.getElementById('items-response')
+            });
+        }
+
+        async function performSpin() {
+            const userId = document.getElementById('spin-user-id').value;
+            await makeRequest(`${API_BASE}/spin/${userId}`, {
+                method: 'POST',
+                responseDiv: document.getElementById('spin-response')
+            });
+        }
+
+        async function checkSpinStatus() {
+            const userId = document.getElementById('spin-user-id').value;
+            await makeRequest(`${API_BASE}/spin/${userId}/status`, {
+                responseDiv: document.getElementById('spin-response')
+            });
+        }
+
+        async function getInventory() {
+            const userId = document.getElementById('inventory-user-id').value;
+            await makeRequest(`${API_BASE}/inventory/${userId}`, {
+                responseDiv: document.getElementById('inventory-response')
+            });
+        }
+
+        async function getEquippedItems() {
+            const userId = document.getElementById('inventory-user-id').value;
+            await makeRequest(`${API_BASE}/inventory/${userId}/equipped`, {
+                responseDiv: document.getElementById('inventory-response')
+            });
+        }
+
+        async function getActiveStats() {
+            const userId = document.getElementById('stats-user-id').value;
+            await makeRequest(`${API_BASE}/stats/${userId}/active`, {
+                responseDiv: document.getElementById('stats-response')
+            });
+        }
+
+        async function getBonuses() {
+            const userId = document.getElementById('stats-user-id').value;
+            await makeRequest(`${API_BASE}/stats/${userId}/bonuses`, {
+                responseDiv: document.getElementById('stats-response')
+            });
+        }
+
+        async function getEffectiveStats() {
+            const userId = document.getElementById('stats-user-id').value;
+            await makeRequest(`${API_BASE}/stats/${userId}/effective`, {
+                responseDiv: document.getElementById('stats-response')
+            });
+        }
+
+        // Auto-check health on load
+        window.addEventListener('load', checkHealth);
+    </script>
+</body>
+
+</html>

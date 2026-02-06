@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: cassina-postgres
+    environment:
+      POSTGRES_USER: cassina_user
+      POSTGRES_PASSWORD: cassina_password
+      POSTGRES_DB: cassina
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-init-ordered.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U cassina_user -d cassina" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: cassina-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PGURI: postgresql://cassina_user:cassina_password@postgres:5432/cassina
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./database:/usr/src/app/database
+      - ./public:/usr/src/app/public
+
+volumes:
+  postgres_data:
